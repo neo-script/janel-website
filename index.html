@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Balloon Party</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f0f8ff;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+    }
+
+    #balloon-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff6ec7;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 15px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+
+    #balloon-btn:hover {
+      background: #ff1493;
+    }
+
+    #balloon-container {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      border-radius: 50%;
+      cursor: pointer;
+      pointer-events: all;
+      transition: transform 0.3s;
+    }
+
+    .balloon:active {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+  <button id="balloon-btn">🎈 Balloons</button>
+  <div id="balloon-container"></div>
+
+  <script>
+    const balloonBtn = document.getElementById("balloon-btn");
+    const container = document.getElementById("balloon-container");
+
+    balloonBtn.addEventListener("click", () => {
+      createBalloon();
+    });
+
+    function createBalloon() {
+      const balloon = document.createElement("div");
+      balloon.classList.add("balloon");
+
+      const size = Math.floor(Math.random() * 50) + 50;
+      balloon.style.width = `${size}px`;
+      balloon.style.height = `${size + 20}px`;
+
+      const colors = ["#FF3CAC", "#784BA0", "#2B86C5", "#FFD93D", "#FF6EC7"];
+      balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+      balloon.style.left = `${Math.random() * (window.innerWidth - size)}px`;
+
+      container.appendChild(balloon);
+
+      const duration = Math.random() * 5 + 5;
+      balloon.animate(
+        [
+          { transform: "translateY(0)" },
+          { transform: `translateY(-${window.innerHeight + 200}px)` }
+        ],
+        {
+          duration: duration * 1000,
+          easing: "linear"
+        }
+      );
+
+      setTimeout(() => {
+        balloon.remove();
+      }, duration * 1000);
+
+      balloon.addEventListener("click", () => {
+        balloon.remove();
+      });
+    }
+  </script>
+</body>
+</html>
