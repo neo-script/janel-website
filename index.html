@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Balloon Party</title>
+  <meta charset="UTF-8">
+  <title>Balloon Animals 🎈</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       background: #f0f8ff;
       font-family: 'Comic Sans MS', cursive, sans-serif;
       overflow: hidden;
@@ -26,6 +24,7 @@
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       transition: 0.3s;
+      z-index: 9999;
     }
 
     #balloon-btn:hover {
@@ -38,23 +37,38 @@
       height: 100%;
       pointer-events: none;
       overflow: hidden;
+      z-index: 1;
     }
 
     .balloon {
       position: absolute;
-      bottom: -100px;
-      border-radius: 50%;
+      bottom: 0; /* spawn instantly at bottom */
+      width: 150px;
+      height: auto;
       cursor: pointer;
       pointer-events: all;
-      transition: transform 0.3s;
+      user-select: none;
+      will-change: transform;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+      animation-name: floatUp;
     }
 
-    .balloon:active {
-      transform: scale(1.2);
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(-2deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(2deg);
+      }
+      100% {
+        transform: translateY(-110vh) rotate(-2deg);
+      }
     }
   </style>
 </head>
 <body>
+
   <button id="balloon-btn">🎈 Balloons</button>
   <div id="balloon-container"></div>
 
@@ -63,39 +77,32 @@
     const container = document.getElementById("balloon-container");
 
     balloonBtn.addEventListener("click", () => {
-      createBalloon();
+      spawnBalloon();
     });
 
-    function createBalloon() {
-      const balloon = document.createElement("div");
+    function spawnBalloon() {
+      const balloon = document.createElement("img");
       balloon.classList.add("balloon");
 
-      const size = Math.floor(Math.random() * 50) + 50;
-      balloon.style.width = `${size}px`;
-      balloon.style.height = `${size + 20}px`;
+      // 50/50 random image selection
+      if (Math.random() < 0.5) {
+        balloon.src = "https://cdn.inspireuplift.com/uploads/images/seller_products/30041/1705982590_Piglet_1.png";
+      } else {
+        balloon.src = "https://i.postimg.cc/tT7RpmG2/image.png";
+      }
 
-      const colors = ["#FF3CAC", "#784BA0", "#2B86C5", "#FFD93D", "#FF6EC7"];
-      balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+      const maxLeft = window.innerWidth - 150;
+      balloon.style.left = Math.random() * maxLeft + "px";
 
-      balloon.style.left = `${Math.random() * (window.innerWidth - size)}px`;
+      // Normal float speed: 4000–7000 ms
+      const duration = 4000 + Math.random() * 3000;
+      balloon.style.animationDuration = duration + "ms";
 
       container.appendChild(balloon);
 
-      const duration = Math.random() * 5 + 5;
-      balloon.animate(
-        [
-          { transform: "translateY(0)" },
-          { transform: `translateY(-${window.innerHeight + 200}px)` }
-        ],
-        {
-          duration: duration * 1000,
-          easing: "linear"
-        }
-      );
-
-      setTimeout(() => {
+      balloon.addEventListener("animationend", () => {
         balloon.remove();
-      }, duration * 1000);
+      });
 
       balloon.addEventListener("click", () => {
         balloon.remove();
